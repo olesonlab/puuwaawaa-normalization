@@ -123,7 +123,7 @@ python src/tradeoff_frontier.py \
 The Puʻuwaʻawaʻa case-study data are shared with the companion repository.
 See `data/README_data.md` and [github.com/olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm).
 
-Data archive: **[Zenodo DOI — add before publication]**
+Data archive: **https://doi.org/10.5281/zenodo.20369405**
 
 ---
 

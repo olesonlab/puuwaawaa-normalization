@@ -15,4 +15,4 @@ git clone https://github.com/olesonlab/puuwaawaa-sdm.git
 Then download `pww_sdm_input_data.xlsx` from the Zenodo archive and place it
 in `puuwaawaa-sdm/data/` before running `tradeoff_frontier.py`.
 
-Data archive: **Zenodo: [DOI — add before publication]**
+Data archive: **https://doi.org/10.5281/zenodo.20369405**

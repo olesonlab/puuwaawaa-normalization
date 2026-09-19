@@ -43,10 +43,12 @@ try:
         BUDGETS,
     )
     OPTIMIZER_AVAILABLE = True
-except ImportError:
+except ImportError as _e:
     OPTIMIZER_AVAILABLE = False
-    print("Warning: pww_sdm_optimizer.py not found. "
-          "Frontier plots require the optimizer.")
+    print(f"Warning: could not import the optimizer ({_e}). "
+          "Frontier plots need pww_sdm_optimizer.py from the companion repo "
+          "github.com/olesonlab/puuwaawaa-sdm, cloned alongside this one, "
+          "and the dependencies in requirements.txt.")
 
 
 def build_scores_with_method(input_data, norm_method):

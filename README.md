@@ -5,7 +5,7 @@ Code for:
 > Oleson, K.L.L., Trauernicht, C., Lonsdorf, E., and Parsons, E.W.
 > **"The normalization trap: how score scaling undermines multi-criteria
 > decision analysis in conservation planning"**
-> *Methods in Ecology and Evolution* (submitted)
+> *Ecological Solutions and Evidence* (in review)
 
 The applied analysis using the recommended within-unit normalization method is at:
 [github.com/olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm)
@@ -123,20 +123,23 @@ python src/tradeoff_frontier.py \
 The Puʻuwaʻawaʻa case-study data are shared with the companion repository.
 See `data/README_data.md` and [github.com/olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm).
 
-Data archive: **https://doi.org/10.5281/zenodo.20369405**
+A copy of the input workbook is committed in `data/`, byte-identical to the
+archived record: **https://doi.org/10.5281/zenodo.20369405**
 
 ---
 
 ## Citation
 
+See `CITATION.cff`, or:
+
 ```bibtex
-@article{oleson2024normalization_trap,
+@article{oleson_normalization_trap,
   title   = {The normalization trap: how score scaling undermines multi-criteria
              decision analysis in conservation planning},
   author  = {Oleson, Kirsten L.L. and Trauernicht, Clay and
              Lonsdorf, Eric and Parsons, Elliott W.},
-  journal = {Methods in Ecology and Evolution},
-  year    = {submitted}
+  journal = {Ecological Solutions and Evidence},
+  note    = {In review}
 }
 ```
 

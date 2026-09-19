@@ -1,8 +1,0 @@
-scenario_id,label,eco_weight,soc_weight,te_split,habitat_split,rancher_split,hunter_split,recreationist_split,w_te,w_habitat,w_rancher,w_hunter,w_recreationist
-S1_balanced,Balanced,0.5,0.5,0.5,0.5,0.33,0.33,0.34,0.25,0.25,0.165,0.165,0.17
-S2_conservation,Conservation priority,0.8,0.2,0.5,0.5,0.33,0.33,0.34,0.4,0.4,0.066,0.066,0.068
-S3_te_emphasis,T&E emphasis,0.8,0.2,0.75,0.25,0.33,0.33,0.34,0.6,0.2,0.066,0.066,0.068
-S4_habitat_emphasis,Habitat emphasis,0.8,0.2,0.25,0.75,0.33,0.33,0.34,0.2,0.6,0.066,0.066,0.068
-S5_community,Community priority,0.2,0.8,0.5,0.5,0.33,0.33,0.34,0.1,0.1,0.264,0.264,0.272
-S6_rancher_conservation,Rancher-conservation,0.5,0.5,0.5,0.5,0.7,0.15,0.15,0.25,0.25,0.35,0.075,0.075
-S7_hunter_recreationist,Hunter-recreationist,0.2,0.8,0.5,0.5,0.1,0.45,0.45,0.1,0.1,0.08,0.36,0.36

@@ -4,7 +4,7 @@ The input data file `pww_sdm_input_data.xlsx` is archived at:
 
 **Zenodo: https://doi.org/10.5281/zenodo.20369405**
 
-Download it and place it in this `data/` folder before running the optimizer.
+A byte-identical copy is committed here, so no download is needed.
 
 This file is shared with the companion repository
 [olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm),

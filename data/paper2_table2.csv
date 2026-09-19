@@ -1,8 +1,0 @@
-Scenario ID,Scenario,Eco wt,Soc wt,w(T&E),w(Hab),w(Ranch),w(Hunt),w(Rec)
-S1_balanced,Balanced,0.5,0.5,0.25,0.25,0.165,0.165,0.17
-S2_conservation,Conservation priority,0.8,0.2,0.4,0.4,0.066,0.066,0.068
-S3_te_emphasis,T&E emphasis,0.8,0.2,0.6,0.2,0.066,0.066,0.068
-S4_habitat_emphasis,Habitat emphasis,0.8,0.2,0.2,0.6,0.066,0.066,0.068
-S5_community,Community priority,0.2,0.8,0.1,0.1,0.264,0.264,0.272
-S6_rancher_conservation,Rancher-conservation,0.5,0.5,0.25,0.25,0.35,0.075,0.075
-S7_hunter_recreationist,Hunter-recreationist,0.2,0.8,0.1,0.1,0.08,0.36,0.36

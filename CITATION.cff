@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the paper."
+title: "puuwaawaa-normalization: normalization methods for MCDA conservation planning"
+abstract: >-
+  Code implementing global linear, vector (Euclidean), and within-unit
+  normalization for multi-criteria decision analysis, with a concentration
+  ratio diagnostic and tradeoff frontier analysis, applied to the
+  Puʻuwaʻawaʻa Forest Reserve case study.
+type: software
+license: MIT
+repository-code: "https://github.com/olesonlab/puuwaawaa-normalization"
+authors:
+  - family-names: Oleson
+    given-names: Kirsten L. L.
+    affiliation: "University of Hawaiʻi at Mānoa"
+    email: koleson@hawaii.edu
+  - family-names: Trauernicht
+    given-names: Clay
+    affiliation: "University of Hawaiʻi at Mānoa"
+  - family-names: Lonsdorf
+    given-names: Eric
+    affiliation: "Emory University"
+  - family-names: Parsons
+    given-names: Elliott W.
+keywords:
+  - multi-criteria decision analysis
+  - structured decision making
+  - normalization
+  - conservation planning
+  - Hawaiʻi
+references:
+  - type: data
+    title: "Puʻuwaʻawaʻa Forest Reserve SDM Input Data"
+    doi: "10.5281/zenodo.20369405"
+    authors:
+      - family-names: Oleson
+        given-names: Kirsten L. L.
+      - family-names: Lonsdorf
+        given-names: Eric
+      - family-names: Trauernicht
+        given-names: Clay
+      - family-names: Parsons
+        given-names: Elliott W.

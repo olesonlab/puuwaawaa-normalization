@@ -7,7 +7,7 @@ Code for:
 > decision analysis in conservation planning"**
 > *Ecological Solutions and Evidence* (in review)
 
-Preprint: [SSRN abstract 7485898](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7485898)
+Preprint: https://doi.org/10.2139/ssrn.7485898
 
 The applied analysis using the recommended within-unit normalization method is at:
 [github.com/olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm)
@@ -171,7 +171,8 @@ See `CITATION.cff`, or:
   author  = {Oleson, Kirsten L.L. and Trauernicht, Clay and
              Lonsdorf, Eric and Parsons, Elliott W.},
   journal = {Ecological Solutions and Evidence},
-  note    = {In review. Preprint: SSRN abstract 7485898}
+  note    = {In review},
+  doi     = {10.2139/ssrn.7485898}
 }
 ```
 

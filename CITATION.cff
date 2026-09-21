@@ -10,8 +10,8 @@ type: software
 license: MIT
 repository-code: "https://github.com/olesonlab/puuwaawaa-normalization"
 identifiers:
-  - type: url
-    value: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7485898"
+  - type: doi
+    value: "10.2139/ssrn.7485898"
     description: "Preprint of the accompanying paper on SSRN"
 authors:
   - family-names: Oleson

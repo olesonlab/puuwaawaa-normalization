@@ -7,6 +7,8 @@ Code for:
 > decision analysis in conservation planning"**
 > *Ecological Solutions and Evidence* (in review)
 
+Preprint: [SSRN abstract 7485898](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7485898)
+
 The applied analysis using the recommended within-unit normalization method is at:
 [github.com/olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm)
 
@@ -23,9 +25,14 @@ two most common approaches — global linear and vector (Euclidean) normalizatio
 optimizer to undervalue the objectives practitioners care most about.
 
 This repository contains:
-1. `normalization_methods.py` — all three normalization methods + the concentration ratio diagnostic
-2. `tradeoff_frontier.py` — tradeoff frontier analysis comparing methods across ecological weights
-3. The worked example scripts from the paper
+1. `normalization_methods.py` — all three normalization methods and the concentration ratio diagnostic
+2. `normalization_comparison.py` — the empirical comparison on the Puʻuwaʻawaʻa data, the simulated-landscape experiment, and the score spread diagnostics
+3. `tradeoff_frontier.py` — tradeoff frontier analysis comparing methods across ecological weights
+
+The model structure matches `pww_sdm_optimizer.py` in the companion repository:
+paddocks choose among the ten paddock-level alternatives, and the roadside
+fuelbreak is a single landscape decision built once for the reserve or not at
+all.
 
 ---
 
@@ -34,9 +41,13 @@ This repository contains:
 ```
 puuwaawaa-normalization/
 ├── src/
-│   ├── normalization_methods.py  # Core normalization functions + concentration ratio
-│   └── tradeoff_frontier.py      # Tradeoff frontier figure (requires puuwaawaa-sdm data)
+│   ├── normalization_methods.py     # Core normalization functions + concentration ratio
+│   ├── normalization_comparison.py  # Empirical, simulation and diagnostic runs
+│   └── tradeoff_frontier.py         # Tradeoff frontier figure (requires puuwaawaa-sdm)
 ├── data/
+│   ├── pww_sdm_input_data.xlsx
+│   ├── empirical_normalization_comparison.csv
+│   ├── score_spread_corrected.csv
 │   └── README_data.md
 ├── figures/                      # Generated figures
 ├── requirements.txt
@@ -94,6 +105,17 @@ results = compare_normalization_methods(
 # each is a (n_paddocks x n_alternatives) weighted score matrix
 ```
 
+### Empirical comparison, simulation and diagnostics
+
+```bash
+python src/normalization_comparison.py data/pww_sdm_input_data.xlsx ./out
+```
+
+`--parts` selects the stages: 1 the empirical comparison, 2 the simulated
+landscapes, 3 the score spread diagnostics. The committed
+`data/empirical_normalization_comparison.csv` and `data/score_spread_corrected.csv`
+come from parts 1 and 3, so the figures reproduce without rerunning the solver.
+
 ### Tradeoff frontier (requires Puʻuwaʻawaʻa input data)
 
 ```bash
@@ -139,7 +161,7 @@ See `CITATION.cff`, or:
   author  = {Oleson, Kirsten L.L. and Trauernicht, Clay and
              Lonsdorf, Eric and Parsons, Elliott W.},
   journal = {Ecological Solutions and Evidence},
-  note    = {In review}
+  note    = {In review. Preprint: SSRN abstract 7485898}
 }
 ```
 

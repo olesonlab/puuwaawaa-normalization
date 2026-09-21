@@ -9,6 +9,9 @@ venv/
 data/*.xlsx
 data/*.csv
 data/*.xls
+# The comparison outputs behind the paper are committed explicitly.
+!data/empirical_normalization_comparison.csv
+!data/score_spread_corrected.csv
 
 # OS
 .DS_Store

@@ -11,7 +11,10 @@ data/*.csv
 data/*.xls
 # The comparison outputs behind the paper are committed explicitly.
 !data/empirical_normalization_comparison.csv
-!data/score_spread_corrected.csv
+!data/appendix_score_spread.csv
+!data/appendix_normalization_portfolios.csv
+!data/normalization_symmetry.csv
+!data/simulation_normalization_comparison.csv
 
 # OS
 .DS_Store

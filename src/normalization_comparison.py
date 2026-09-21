@@ -72,6 +72,8 @@ def load_input_data(filepath):
             costs[i, j] = val if pd.notna(val) else 0.0
     costs[:, ROADSIDE_ALT_IDX] = 0.0  # charged once, outside the paddock loop
 
+    area_km2 = np.array([data.iloc[i + 2, 3] for i in range(N_PADDOCKS)], dtype=float) / 1e6
+
     rp = pd.read_excel(xls, "native_rareplants", header=None)
     te_count = np.array([rp.iloc[i + 4, 2] for i in range(N_PADDOCKS)], dtype=float)
     native_cover = np.array([rp.iloc[i + 4, 1] for i in range(N_PADDOCKS)], dtype=float)
@@ -97,6 +99,7 @@ def load_input_data(filepath):
 
     return {
         "costs": costs, "te_count": te_count, "native_cover": native_cover,
+        "area_km2": area_km2,
         "community_raw": community_raw, "hunter_raw": hunter_raw,
         "rancher_raw": rancher_raw, "fire_prob_baseline": fire_prob_baseline,
         "fire_prob": fire_prob,
@@ -148,8 +151,13 @@ def compute_action_effectiveness(fire_prob_baseline, fire_prob):
     return DIRECT_BENEFIT[None, :] + scaled
 
 
-def prepare_scores_method(input_data, method, roadside_built=False):
-    """Normalized score matrices (21 x 10) under one normalization method."""
+def prepare_scores_method(input_data, method, roadside_built=False,
+                          comm_method="global_linear"):
+    """Normalized score matrices (21 x 10).
+
+    `method` normalizes the two conservation sub-objectives, `comm_method` the
+    three community ones, so the two choices can be crossed.
+    """
     opt_indices = [i for i in range(N_PADDOCKS) if i != FIXED_PADDOCK_IDX]
 
     fire_prob = apply_roadside(input_data["fire_prob"], roadside_built)
@@ -172,15 +180,14 @@ def prepare_scores_method(input_data, method, roadside_built=False):
     else:
         raise ValueError(f"unknown method: {method}")
 
+    g = {"global_linear": normalize_global_linear, "vector": normalize_vector,
+         "within_unit": normalize_within_unit}[comm_method]
     scores = {
         "te": te_scores,
         "habitat": habitat_scores,
-        "recreationist": normalize_global_linear(
-            input_data["community_raw"][np.ix_(opt_indices, PADDOCK_ALTS)]),
-        "hunter": normalize_global_linear(
-            input_data["hunter_raw"][np.ix_(opt_indices, PADDOCK_ALTS)]),
-        "rancher": normalize_global_linear(
-            input_data["rancher_raw"][np.ix_(opt_indices, PADDOCK_ALTS)]),
+        "recreationist": g(input_data["community_raw"][np.ix_(opt_indices, PADDOCK_ALTS)]),
+        "hunter": g(input_data["hunter_raw"][np.ix_(opt_indices, PADDOCK_ALTS)]),
+        "rancher": g(input_data["rancher_raw"][np.ix_(opt_indices, PADDOCK_ALTS)]),
     }
     return scores, opt_indices
 
@@ -195,10 +202,16 @@ def build_scenarios():
                         "eco_split": (0.50, 0.50), "soc_split": (0.33, 0.33, 0.34)},
         "S2_conservation": {"label": "Conservation priority", "eco_weight": 0.80,
                             "eco_split": (0.50, 0.50), "soc_split": (0.33, 0.33, 0.34)},
+        "S3_te_emphasis": {"label": "T&E emphasis", "eco_weight": 0.80,
+                           "eco_split": (0.75, 0.25), "soc_split": (0.33, 0.33, 0.34)},
+        "S4_habitat_emphasis": {"label": "Habitat emphasis", "eco_weight": 0.80,
+                                "eco_split": (0.25, 0.75), "soc_split": (0.33, 0.33, 0.34)},
         "S5_community": {"label": "Community priority", "eco_weight": 0.20,
                          "eco_split": (0.50, 0.50), "soc_split": (0.33, 0.33, 0.34)},
         "S6_rancher_conservation": {"label": "Rancher-conservation", "eco_weight": 0.50,
                                     "eco_split": (0.50, 0.50), "soc_split": (0.70, 0.15, 0.15)},
+        "S7_hunter_recreationist": {"label": "Hunter-recreationist", "eco_weight": 0.20,
+                                    "eco_split": (0.50, 0.50), "soc_split": (0.10, 0.45, 0.45)},
     }
 
 
@@ -245,12 +258,14 @@ def optimize(scores, costs, budget, weights):
     }
 
 
-def solve_scenario_budget(input_data, method, weights, budget):
+def solve_scenario_budget(input_data, method, weights, budget,
+                          comm_method="global_linear"):
     """Solve with and without the roadside fuelbreak; keep the better solution."""
     fixed_cost = input_data["costs"][FIXED_PADDOCK_IDX, FIXED_ALT_IDX]
     best = None
     for roadside_built in (False, True):
-        scores, opt_indices = prepare_scores_method(input_data, method, roadside_built)
+        scores, opt_indices = prepare_scores_method(
+            input_data, method, roadside_built, comm_method)
         available = budget - fixed_cost - (ROADSIDE_COST if roadside_built else 0.0)
         if available < 0:
             continue
@@ -331,6 +346,7 @@ def run_empirical_comparison(filepath, output_dir):
 # ============================================================
 
 def compute_score_diagnostics(filepath, output_dir):
+    """Per-paddock T&E score spread under each normalization method."""
     print("\n" + "=" * 70)
     print("PART 3: SCORE DISTRIBUTION DIAGNOSTICS")
     print("=" * 70)
@@ -344,32 +360,138 @@ def compute_score_diagnostics(filepath, output_dir):
             for idx, orig_i in enumerate(opt_indices):
                 row = te[idx, :]
                 rows.append({
-                    "method": method, "roadside_built": roadside_built,
-                    "paddock": orig_i + 1, "te_count": input_data["te_count"][orig_i],
-                    "te_min": row.min(), "te_max": row.max(),
-                    "te_spread": row.max() - row.min(),
+                    "method": method,
+                    "paddock": orig_i + 1,
+                    "te_count": input_data["te_count"][orig_i],
+                    "size_km2": round(float(input_data["area_km2"][orig_i]), 2),
+                    "spread": float(row.max() - row.min()),
+                    "roadside_built": roadside_built,
                 })
 
     df = pd.DataFrame(rows)
-    out = os.path.join(output_dir, "score_spread_corrected.csv")
+    out = os.path.join(output_dir, "appendix_score_spread.csv")
     df.to_csv(out, index=False)
     print(f"Saved {out}\n")
 
-    base = df[~df.roadside_built]
     print("  Paddocks (of 21) with T&E spread below each threshold:")
-    print(f"  {'method':<14s} {'<0.01':>6s} {'<0.05':>6s} {'<0.10':>6s}")
-    for method in METHODS:
-        s = base[base.method == method].te_spread
-        print(f"  {method:<14s} {int((s < 0.01).sum()):>6d} "
-              f"{int((s < 0.05).sum()):>6d} {int((s < 0.10).sum()):>6d}")
-
-    built = df[df.roadside_built]
-    print("\n  Same counts with the roadside fuelbreak built:")
-    for method in METHODS:
-        s = built[built.method == method].te_spread
-        print(f"  {method:<14s} {int((s < 0.01).sum()):>6d} "
-              f"{int((s < 0.05).sum()):>6d} {int((s < 0.10).sum()):>6d}")
+    print(f"  {'method':<14s} {'roadside':>9s} {'<0.01':>6s} {'<0.05':>6s} {'<0.10':>6s}")
+    for built in (False, True):
+        for method in METHODS:
+            sp = df[(df.method == method) & (df.roadside_built == built)].spread
+            print(f"  {method:<14s} {str(built):>9s} {int((sp < 0.01).sum()):>6d} "
+                  f"{int((sp < 0.05).sum()):>6d} {int((sp < 0.10).sum()):>6d}")
     return df
+
+
+# ============================================================
+# PART 4: CROSSED NORMALIZATION AND HEADLINE METRICS
+# ============================================================
+
+ECO_COMM_PAIRS = [("within_unit", "global_linear"), ("global_linear", "within_unit"),
+                  ("global_linear", "global_linear"), ("within_unit", "within_unit")]
+B20 = 20_000_000
+
+
+def _grid(input_data, eco, comm):
+    """All scenarios and budgets under one pair of normalization methods."""
+    scenarios = build_scenarios()
+    out = {}
+    for sid, sdef in scenarios.items():
+        w = effective_weights(sdef)
+        for budget in BUDGETS:
+            res = solve_scenario_budget(input_data, eco, w, budget, comm)
+            if res is not None:
+                out[(sdef["label"], budget)] = res
+    return out
+
+
+def _symmetry_metrics(grid):
+    """Exchange ratios and the findings they support, at $20M against Balanced."""
+    base = grid.get(("Balanced", B20))
+    if base is None:
+        return {}
+    keys = ["te", "habitat", "rancher", "hunter", "recreationist"]
+
+    def delta(label, key):
+        r = grid.get((label, B20))
+        return np.nan if r is None else r["sub_scores"][key] - base["sub_scores"][key]
+
+    def exchange(label, key):
+        loss = -delta(label, "te")
+        gained = delta(label, key)
+        if not np.isfinite(loss) or loss <= 1e-9:
+            return np.inf if gained > 0 else np.nan
+        return gained / loss
+
+    gain = delta("Conservation priority", "te")
+    asym = -delta("Community priority", "te") / gain if gain > 1e-9 else np.inf
+    s6 = exchange("Rancher-conservation", "rancher")
+    s5 = exchange("Community priority", "rancher")
+    s7 = exchange("Hunter-recreationist", "hunter")
+
+    spend = [grid[("Conservation priority", b)]["total_cost"] / b
+             for b in BUDGETS if ("Conservation priority", b) in grid]
+    s5_60 = grid.get(("Community priority", 60_000_000))
+
+    return {
+        "asym_ratio": asym,
+        "S6_rancher_per_te": s6,
+        "S5_rancher_per_te": s5,
+        "S7_hunter_per_te": s7,
+        "S6_te_change": delta("Rancher-conservation", "te"),
+        "S6_rancher_change": delta("Rancher-conservation", "rancher"),
+        "S2_spend_min_share": min(spend) if spend else np.nan,
+        "S5_spend_share_60M": s5_60["total_cost"] / 60e6 if s5_60 else np.nan,
+        "S6_beats_S5": bool(np.nan_to_num(s6, nan=-1) > np.nan_to_num(s5, nan=-1)),
+        "asym_holds": bool(asym > 1),
+        "hunter_weaker": bool(np.nan_to_num(s7, nan=-1) < np.nan_to_num(s6, nan=-1)),
+    }
+
+
+def run_crossed_comparison(filepath, output_dir):
+    print("\n" + "=" * 70)
+    print("PART 4: CROSSED NORMALIZATION AND HEADLINE METRICS")
+    print("=" * 70)
+
+    input_data = load_input_data(filepath)
+
+    # Portfolios: each conservation normalization against the standard
+    # global-linear treatment of community scores.
+    rows = []
+    for eco in METHODS:
+        grid = _grid(input_data, eco, "global_linear")
+        for (label, budget), r in grid.items():
+            alts = [PADDOCK_ALTS[c] + 1 for c in r["choices"]]
+            rows.append({
+                "method_eco": eco, "method_comm": "global_linear",
+                "scenario": label, "budget": budget, "budget_M": budget / 1e6,
+                "roadside_built": r["roadside_built"], "total_cost": r["total_cost"],
+                **{k: r["sub_scores"][k] for k in
+                   ("te", "habitat", "rancher", "hunter", "recreationist")},
+                "n_conservation_alts": sum(1 for a in alts if a in (4, 5, 6, 7)),
+                "n_alt3": alts.count(3), "n_alt1": alts.count(1), "n_alt7": alts.count(7),
+                "choices": ",".join(str(a) for a in alts),
+            })
+    portfolios = pd.DataFrame(rows)
+    out = os.path.join(output_dir, "appendix_normalization_portfolios.csv")
+    portfolios.to_csv(out, index=False)
+    print(f"\nSaved {out} ({len(portfolios)} rows)")
+
+    # Headline metrics under crossed eco and community normalization.
+    rows = []
+    for eco, comm in ECO_COMM_PAIRS:
+        grid = _grid(input_data, eco, comm)
+        m = _symmetry_metrics(grid)
+        m.update(eco=eco, comm=comm)
+        rows.append(m)
+    symmetry = pd.DataFrame(rows)
+    out = os.path.join(output_dir, "normalization_symmetry.csv")
+    symmetry.to_csv(out, index=False)
+    print(f"Saved {out}\n")
+    cols = ["eco", "comm", "asym_ratio", "S6_rancher_per_te",
+            "S5_rancher_per_te", "S7_hunter_per_te"]
+    print(symmetry[cols].to_string(index=False, float_format=lambda v: f"{v:.3f}"))
+    return portfolios, symmetry
 
 
 # ============================================================
@@ -504,8 +626,9 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("input")
     ap.add_argument("outdir")
-    ap.add_argument("--parts", default="1,2,3",
-                    help="comma-separated: 1 empirical, 2 simulation, 3 diagnostics")
+    ap.add_argument("--parts", default="1,2,3,4",
+                    help="comma-separated: 1 empirical, 2 simulation, "
+                         "3 score spread, 4 crossed normalization")
     args = ap.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
     parts = {p.strip() for p in args.parts.split(",")}
@@ -516,6 +639,8 @@ if __name__ == "__main__":
         run_simulation_experiment(args.outdir)
     if "3" in parts:
         compute_score_diagnostics(args.input, args.outdir)
+    if "4" in parts:
+        run_crossed_comparison(args.input, args.outdir)
 
     print("\n" + "=" * 70)
     print("COMPLETE")

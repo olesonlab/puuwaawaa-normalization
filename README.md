@@ -26,7 +26,7 @@ optimizer to undervalue the objectives practitioners care most about.
 
 This repository contains:
 1. `normalization_methods.py` — all three normalization methods and the concentration ratio diagnostic
-2. `normalization_comparison.py` — the empirical comparison on the Puʻuwaʻawaʻa data, the simulated-landscape experiment, and the score spread diagnostics
+2. `normalization_comparison.py` — the empirical comparison on the Puʻuwaʻawaʻa data, the crossed eco/community symmetry metrics, the simulated-landscape experiment, and the score spread diagnostics
 3. `tradeoff_frontier.py` — tradeoff frontier analysis comparing methods across ecological weights
 
 The model structure matches `pww_sdm_optimizer.py` in the companion repository:
@@ -47,7 +47,10 @@ puuwaawaa-normalization/
 ├── data/
 │   ├── pww_sdm_input_data.xlsx
 │   ├── empirical_normalization_comparison.csv
-│   ├── score_spread_corrected.csv
+│   ├── appendix_score_spread.csv
+│   ├── appendix_normalization_portfolios.csv
+│   ├── normalization_symmetry.csv
+│   ├── simulation_normalization_comparison.csv
 │   └── README_data.md
 ├── figures/                      # Generated figures
 ├── requirements.txt
@@ -111,10 +114,17 @@ results = compare_normalization_methods(
 python src/normalization_comparison.py data/pww_sdm_input_data.xlsx ./out
 ```
 
-`--parts` selects the stages: 1 the empirical comparison, 2 the simulated
-landscapes, 3 the score spread diagnostics. The committed
-`data/empirical_normalization_comparison.csv` and `data/score_spread_corrected.csv`
-come from parts 1 and 3, so the figures reproduce without rerunning the solver.
+`--parts` selects the stages: 1 the empirical comparison, the appendix portfolios
+and the crossed symmetry metrics, 2 the simulated landscapes, 3 the score spread
+diagnostics. All five output CSVs are committed under `data/`, so the figures
+reproduce without rerunning the solver.
+
+The symmetry stage crosses the conservation and community normalizations over
+four pairings and records the exchange ratios at $20M. Under the
+within-unit/global-linear pairing used in the paper it reproduces the companion
+repository's sensitivity baseline to fifteen significant figures: asymmetry
+ratio 1.7528, and 3.3132, 0.5851 and 0.4042 rancher or hunter points per T&E
+point lost for S6, S5 and S7.
 
 ### Tradeoff frontier (requires Puʻuwaʻawaʻa input data)
 

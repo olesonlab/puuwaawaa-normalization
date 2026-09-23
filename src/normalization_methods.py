@@ -6,7 +6,7 @@ diagnostic described in:
 
   Oleson et al. "The normalization trap: how score scaling undermines
   multi-criteria decision analysis in conservation planning"
-  Methods in Ecology and Evolution (submitted)
+  Ecological Solutions and Evidence (in review). Preprint: https://doi.org/10.2139/ssrn.7485898
 
 The three methods:
   1. Global linear (min-max across all paddocks and alternatives)

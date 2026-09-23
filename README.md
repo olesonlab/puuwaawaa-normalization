@@ -43,7 +43,8 @@ puuwaawaa-normalization/
 ├── src/
 │   ├── normalization_methods.py     # Core normalization functions + concentration ratio
 │   ├── normalization_comparison.py  # Empirical, simulation and diagnostic runs
-│   └── tradeoff_frontier.py         # Tradeoff frontier figure (requires puuwaawaa-sdm)
+│   ├── tradeoff_frontier.py         # Tradeoff frontier figure (requires puuwaawaa-sdm)
+│   └── csp_appendix_figures.py      # Figures S10, S11 and Tables S8 to S10 of the CSP paper
 ├── data/
 │   ├── pww_sdm_input_data.xlsx
 │   ├── empirical_normalization_comparison.csv
@@ -125,6 +126,17 @@ within-unit/global-linear pairing used in the paper it reproduces the companion
 repository's sensitivity baseline to fifteen significant figures: asymmetry
 ratio 1.7528, and 3.3132, 0.5851 and 0.4042 rancher or hunter points per T&E
 point lost for S6, S5 and S7.
+
+### Appendix S1 of the Conservation Science and Practice paper
+
+The normalization comparison reported in Appendix S1 of the companion paper
+(puuwaawaa-sdm) reads the committed CSVs, so it needs no solver:
+
+```bash
+python src/csp_appendix_figures.py data/pww_sdm_input_data.xlsx data figures
+```
+
+It writes Figures S10 and S11 as PDF and 600 dpi PNG, and Tables S8 to S10 as CSV.
 
 ### Tradeoff frontier (requires Puʻuwaʻawaʻa input data)
 

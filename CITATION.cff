@@ -1,19 +1,18 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the paper."
-title: "puuwaawaa-normalization: score scaling in the Puʻuwaʻawaʻa spatial portfolio model"
-version: 1.2.0
-date-released: 2026-11-07
+title: "puuwaawaa-normalization: normalization methods for MCDA conservation planning"
 abstract: >-
-  Code for the normalization comparison (Appendix S1) and the Paddock 9
-  structural sensitivity in the Puʻuwaʻawaʻa Forest Reserve structured
-  decision making case study. It compares global linear, vector and
-  within-unit scaling of the same criterion scores, and tests how fixing or
-  freeing the Paddock 9 restoration commitment changes optimal portfolios
-  under three specifications of conservation value and budgets from $0.5M
-  to $60M.
+  Code implementing global linear, vector (Euclidean), and within-unit
+  normalization for multi-criteria decision analysis, with a concentration
+  ratio diagnostic and tradeoff frontier analysis, applied to the
+  Puʻuwaʻawaʻa Forest Reserve case study.
 type: software
 license: MIT
 repository-code: "https://github.com/olesonlab/puuwaawaa-normalization"
+identifiers:
+  - type: doi
+    value: "10.2139/ssrn.7485898"
+    description: "Preprint of the accompanying paper on SSRN"
 authors:
   - family-names: Oleson
     given-names: Kirsten L. L.
@@ -34,28 +33,6 @@ keywords:
   - conservation planning
   - Hawaiʻi
 references:
-  - type: article
-    title: "Structured Decision Making reveals asymmetric tradeoffs between conservation and community objectives at Puʻuwaʻawaʻa Forest Reserve, Hawaiʻi"
-    journal: "Conservation Science and Practice"
-    status: in-preparation
-    notes: "In review"
-    authors:
-      - family-names: Oleson
-        given-names: Kirsten L. L.
-      - family-names: Trauernicht
-        given-names: Clay
-      - family-names: Lonsdorf
-        given-names: Eric
-      - family-names: Parsons
-        given-names: Elliott W.
-      - family-names: Adkins
-        given-names: Edith
-  - type: software
-    title: "puuwaawaa-sdm"
-    url: "https://github.com/olesonlab/puuwaawaa-sdm"
-    authors:
-      - family-names: Oleson
-        given-names: Kirsten L. L.
   - type: data
     title: "Puʻuwaʻawaʻa Forest Reserve SDM Input Data"
     doi: "10.5281/zenodo.20369405"
@@ -66,17 +43,5 @@ references:
         given-names: Eric
       - family-names: Trauernicht
         given-names: Clay
-      - family-names: Parsons
-        given-names: Elliott W.
-  - type: article
-    title: "Earlier preprint of this analysis, under a framing the current papers no longer use"
-    doi: "10.2139/ssrn.7485898"
-    authors:
-      - family-names: Oleson
-        given-names: Kirsten L. L.
-      - family-names: Trauernicht
-        given-names: Clay
-      - family-names: Lonsdorf
-        given-names: Eric
       - family-names: Parsons
         given-names: Elliott W.

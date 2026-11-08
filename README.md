@@ -33,7 +33,13 @@ python -u src/effectiveness_sensitivity.py --sites 12 22 50 --reps 20
 python src/make_exhibits.py
 ```
 
-Every landscape is drawn from a deterministic seed. The archived scaling results were produced on macOS 15.5 with Python 3.13, NumPy 2.4 and SciPy 1.17. A rerun on Linux with Python 3.14 and SciPy 1.18 returned near-tied alternative optima in 3 of the 8,640 baseline 50-site comparisons, with relative objective differences below 10⁻⁶. Its rerun of the raw-effectiveness pair matched 8,636 of 8,640 records; the four that differed were also near-tied 50-site comparisons.
+Every landscape is drawn from a deterministic seed. The archived scaling results were produced on macOS 15.5 with Python 3.13, NumPy 2.4 and SciPy 1.17. Reruns on Linux with Python 3.13 or 3.14 and SciPy 1.18 gave the following:
+
+- Baseline design: near-tied alternative optima in 3 of 8,640 comparisons, all at 50 sites, with relative objective differences below 10⁻⁶.
+- Wide design: a different portfolio in 3 of 8,640 comparisons, all at 50 sites, at one or two sites each. Eight 22-site rows differed by less than 10⁻⁶ in a continuous outcome, which is floating-point noise; their portfolios were identical. Every wide-design value quoted in the manuscript is the same in the rerun.
+- Raw-effectiveness pair: 8,636 of 8,640 records matched; the four that differed were near-tied 50-site comparisons.
+
+No pooled mean reported in the manuscript changes at the precision given.
 
 ## Exhibits
 

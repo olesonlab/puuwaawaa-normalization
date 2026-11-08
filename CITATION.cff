@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the paper."
 title: "puuwaawaa-normalization: simulation code for 'When scaling changes conservation priorities'"
-version: 2.0.0
+version: 2.0.1
 abstract: >-
   Simulation code and results testing when rescaling a conservation criterion
   changes the portfolio chosen by a budgeted site-action integer program.

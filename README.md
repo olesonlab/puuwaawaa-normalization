@@ -1,204 +1,57 @@
-# The Normalization Trap in MCDA Conservation Planning
+# When scaling changes conservation priorities
 
-Code for:
+Simulation code and results for:
 
-> Oleson, K.L.L., Trauernicht, C., Lonsdorf, E., and Parsons, E.W.
-> **"The normalization trap: how score scaling undermines multi-criteria
-> decision analysis in conservation planning"**
-> *Ecological Solutions and Evidence* (in review)
+> Oleson, K. L. L., Trauernicht, C., Parsons, E. W., and Lonsdorf, E. When scaling changes conservation priorities: evaluating normalization choices in spatial decision analysis. Submitted to *Ecological Solutions and Evidence*.
 
-Preprint: https://doi.org/10.2139/ssrn.7485898
+The paper asks when rescaling a conservation criterion changes the portfolio chosen by a budgeted integer program that assigns one action to each site. Rescaling a whole criterion with a compensating coefficient, or normalizing the whole site–action matrix by its vector norm, leaves the portfolio unchanged. Rescaling at a fixed nominal weight, normalizing each action column separately, or switching between equal-swing and abundance-weighted conservation scores changes it. Equal-swing and abundance-weighted scoring are treated as alternative value specifications. Neither is presented as the correct one.
 
-The applied analysis using the recommended within-unit normalization method is at:
-[github.com/olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm)
+All results come from simulated landscapes. No field data are analysed. The Puʻuwaʻawaʻa Forest Reserve decision model that motivated the study is archived separately at [olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm).
 
----
+## Contents
 
-## Overview
+- `src/combined_simulation.py` generates landscapes (abundance concentration, cost–abundance relation, community response, budget, conservation weight) and solves the budgeted site–action program with SciPy's `milp`. It raises an error unless the solver reports an optimal solution. The other scripts import it.
+- `src/scaling_experiment.py` runs the standardized and applied pairs and diagnostics D1–D4 under the baseline and wide effectiveness designs.
+- `src/effectiveness_sensitivity.py` runs the raw-effectiveness pair reported in Appendix S1.
+- `src/make_exhibits.py` rebuilds the tables and figures from the archived results.
+- `results/scaling_experiment/` holds the output of `scaling_experiment.py` for both effectiveness designs (17,280 comparisons; the 8,640 baseline rows are those used in the main-text exhibits), with `run_info.json` recording the software versions and platform.
+- `results/effectiveness_sensitivity/` holds the output of `effectiveness_sensitivity.py` (8,640 comparisons).
+- `exhibits/` holds the tables (CSV) and figures (PNG) written by `make_exhibits.py`.
 
-Multi-criteria decision analysis (MCDA) requires normalizing raw scores onto
-a common scale before weighting and optimization. This paper shows that the
-two most common approaches — global linear and vector (Euclidean) normalization
-— systematically compress the scores of spatially concentrated objectives
-(e.g., threatened plant populations) relative to broadly distributed objectives
-(e.g., community preferences). In conservation optimization, this causes the
-optimizer to undervalue the objectives practitioners care most about.
-
-This repository contains:
-1. `normalization_methods.py` — all three normalization methods and the concentration ratio diagnostic
-2. `normalization_comparison.py` — the empirical comparison on the Puʻuwaʻawaʻa data, the crossed eco/community symmetry metrics, the simulated-landscape experiment, and the score spread diagnostics
-3. `tradeoff_frontier.py` — tradeoff frontier analysis comparing methods across ecological weights
-
-The model structure matches `pww_sdm_optimizer.py` in the companion repository:
-paddocks choose among the ten paddock-level alternatives, and the roadside
-fuelbreak is a single landscape decision built once for the reserve or not at
-all.
-
----
-
-## Repository structure
+## Reproducing the results
 
 ```
-puuwaawaa-normalization/
-├── src/
-│   ├── normalization_methods.py     # Core normalization functions + concentration ratio
-│   ├── normalization_comparison.py  # Empirical, simulation and diagnostic runs
-│   ├── tradeoff_frontier.py         # Tradeoff frontier figure (requires puuwaawaa-sdm)
-│   └── csp_appendix_figures.py      # Figures S10, S11 and Tables S8 to S10 of the CSP paper
-├── data/
-│   ├── pww_sdm_input_data.xlsx
-│   ├── empirical_normalization_comparison.csv
-│   ├── appendix_score_spread.csv
-│   ├── appendix_normalization_portfolios.csv
-│   ├── normalization_symmetry.csv
-│   ├── simulation_normalization_comparison.csv
-│   └── README_data.md
-├── figures/                      # Generated figures
-├── requirements.txt
-└── README.md
-```
-
----
-
-## Setup
-
-```bash
-git clone https://github.com/olesonlab/puuwaawaa-normalization.git
-cd puuwaawaa-normalization
-python -m venv venv
-source venv/bin/activate
 pip install -r requirements.txt
+
+# Standardized and applied pairs, diagnostics D1–D4, both effectiveness designs (about 3 minutes with 4 workers)
+python -u src/scaling_experiment.py --sites 12 22 50 --reps 20 --workers 4 --effect baseline wide --out scaling_out
+
+# Raw-effectiveness pair (Appendix S1); writes its outputs next to the script
+python -u src/effectiveness_sensitivity.py --sites 12 22 50 --reps 20
+
+# Tables and figures from the archived results
+python src/make_exhibits.py
 ```
 
----
+Every landscape is drawn from a deterministic seed. The archived scaling results were produced on macOS 15.5 with Python 3.13, NumPy 2.4 and SciPy 1.17. A rerun on Linux with Python 3.14 and SciPy 1.18 returned near-tied alternative optima in 3 of the 8,640 baseline 50-site comparisons, with relative objective differences below 10⁻⁶. Its rerun of the raw-effectiveness pair matched 8,636 of 8,640 records; the four that differed were also near-tied 50-site comparisons.
 
-## Usage
+## Exhibits
 
-### Concentration ratio diagnostic
+| Manuscript | File in `exhibits/` | Source |
+| --- | --- | --- |
+| Figure 1, Table S2 | `figure1_disagreement_by_concentration.png`, `tableS2_disagreement_by_sites_concentration.csv` | Standardized pair, baseline design |
+| Table 1 | `table1_disagreement_by_sites_community.csv` | Standardized pair, baseline design |
+| Figure 2, Table S3 | `figure2_community_by_weight.png`, `tableS3_concentrated_generous_by_weight.csv` | Standardized pair, baseline design, concentrated abundance, generous budget |
+| Figure 3 | `figure3_two_way_coverage.png`, `figure3_coverage_forgone_data.csv` | Applied pair, baseline design |
+| Table 2 | `table2_diagnostics_by_weight.csv` | Diagnostics D1–D4, baseline design |
+| Figure S1, Table S1 | `figureS1_standardized_vs_raw.png`, `tableS1_standardized_vs_raw.csv` | `results/effectiveness_sensitivity/` |
 
-```python
-from src.normalization_methods import concentration_ratio, gini_coefficient
+Wide-design results quoted in the text are in the rows of `results/scaling_experiment/scaling_results.csv` with `effect_design == "wide"`.
 
-# Your raw T&E counts per spatial unit
-te_counts = [580, 216, 94, 47, 28, ...]   # example: Puʻuwaʻawaʻa paddocks
+## Earlier versions
 
-cr = concentration_ratio(te_counts, top_k=3)
-g  = gini_coefficient(te_counts)
-
-print(f"Concentration ratio (top-3): {cr:.2f}")
-# > 0.6 → within-unit normalization strongly recommended
-# 0.4–0.6 → worth comparing methods
-# < 0.4 → method choice has minimal impact
-
-print(f"Gini coefficient: {g:.2f}")
-```
-
-### Compare normalization methods
-
-```python
-import numpy as np
-from src.normalization_methods import compare_normalization_methods
-
-# raw_scores: dict of {objective: array(n_paddocks, n_alternatives)}
-results = compare_normalization_methods(
-    raw_scores={"te": te_matrix, "rancher": rancher_matrix},
-    weights=[0.8, 0.2],   # conservation-priority weights
-)
-
-# results["global_linear"], results["vector"], results["within_unit"]
-# each is a (n_paddocks x n_alternatives) weighted score matrix
-```
-
-### Empirical comparison, simulation and diagnostics
-
-```bash
-python src/normalization_comparison.py data/pww_sdm_input_data.xlsx ./out
-```
-
-`--parts` selects the stages: 1 the empirical comparison, the appendix portfolios
-and the crossed symmetry metrics, 2 the simulated landscapes, 3 the score spread
-diagnostics. All five output CSVs are committed under `data/`, so the figures
-reproduce without rerunning the solver.
-
-The symmetry stage crosses the conservation and community normalizations over
-four pairings and records the exchange ratios at $20M. Under the
-within-unit/global-linear pairing used in the paper it reproduces the companion
-repository's sensitivity baseline to fifteen significant figures: asymmetry
-ratio 1.7528, and 3.3132, 0.5851 and 0.4042 rancher or hunter points per T&E
-point lost for S6, S5 and S7.
-
-### Appendix S1 of the Conservation Science and Practice paper
-
-The normalization comparison reported in Appendix S1 of the companion paper
-(puuwaawaa-sdm) reads the committed CSVs, so it needs no solver:
-
-```bash
-python src/csp_appendix_figures.py data/pww_sdm_input_data.xlsx data figures
-```
-
-It writes Figures S10 and S11 as PDF and 600 dpi PNG, and Tables S8 to S10 as CSV.
-
-### Tradeoff frontier (requires Puʻuwaʻawaʻa input data)
-
-```bash
-# Clone companion repo alongside this one
-git clone https://github.com/olesonlab/puuwaawaa-sdm.git
-
-python src/tradeoff_frontier.py \
-    --data ../puuwaawaa-sdm/data/pww_sdm_input_data.xlsx \
-    --budget 20000000 \
-    --output_dir ./figures
-```
-
----
-
-## The three normalization methods
-
-| Method | Formula | Behaviour |
-|---|---|---|
-| Global linear | `(x - global_min) / (global_max - global_min)` | Preserves absolute differences across all units |
-| Vector (Euclidean) | `x / ‖x‖₂` per alternative | Column-wise scaling; sensitive to extreme values |
-| **Within-unit** (recommended) | `(x - unit_min) / (unit_max - unit_min)` per paddock | Scores relative best/worst within each unit; decouples spatial priority from action effectiveness |
-
----
-
-## Data
-
-The Puʻuwaʻawaʻa case-study data are shared with the companion repository.
-See `data/README_data.md` and [github.com/olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm).
-
-A copy of the input workbook is committed in `data/`, byte-identical to the
-archived record: **https://doi.org/10.5281/zenodo.20369405**
-
----
-
-## Citation
-
-See `CITATION.cff`, or:
-
-```bibtex
-@article{oleson_normalization_trap,
-  title   = {The normalization trap: how score scaling undermines multi-criteria
-             decision analysis in conservation planning},
-  author  = {Oleson, Kirsten L.L. and Trauernicht, Clay and
-             Lonsdorf, Eric and Parsons, Elliott W.},
-  journal = {Ecological Solutions and Evidence},
-  note    = {In review},
-  doi     = {10.2139/ssrn.7485898}
-}
-```
-
----
+Versions 1.0.0 and 1.1.0 of this repository hold code for an earlier, superseded manuscript on normalization in conservation MCDA. That code, including the concentration-ratio diagnostic and the Puʻuwaʻawaʻa normalization comparison, is not used in this paper. The Puʻuwaʻawaʻa normalization comparison now lives in [olesonlab/puuwaawaa-sdm](https://github.com/olesonlab/puuwaawaa-sdm). The earlier versions remain available from Zenodo.
 
 ## License
 
-Code: MIT License  
-Data: CC BY 4.0
-
----
-
-## Contact
-
-Kirsten Oleson — koleson@hawaii.edu  
-Department of Natural Resources and Environmental Management  
-University of Hawaiʻi at Mānoa
+MIT. See `LICENSE`.

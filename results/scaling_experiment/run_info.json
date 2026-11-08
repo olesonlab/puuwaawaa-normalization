@@ -1,0 +1,22 @@
+{
+  "effect": [
+    "baseline",
+    "wide"
+  ],
+  "sites": [
+    12,
+    22,
+    50
+  ],
+  "reps": 20,
+  "workers": 4,
+  "diagnostics": true,
+  "rows": 17280,
+  "seconds": 195.3,
+  "python": "3.13.12",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "pandas": "3.0.3",
+  "platform": "macOS-15.5-arm64-arm-64bit-Mach-O",
+  "tie_tol": 1e-06
+}

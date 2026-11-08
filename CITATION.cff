@@ -1,18 +1,17 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the paper."
-title: "puuwaawaa-normalization: normalization methods for MCDA conservation planning"
+title: "puuwaawaa-normalization: simulation code for 'When scaling changes conservation priorities'"
+version: 2.0.0
 abstract: >-
-  Code implementing global linear, vector (Euclidean), and within-unit
-  normalization for multi-criteria decision analysis, with a concentration
-  ratio diagnostic and tradeoff frontier analysis, applied to the
-  Puʻuwaʻawaʻa Forest Reserve case study.
+  Simulation code and results testing when rescaling a conservation criterion
+  changes the portfolio chosen by a budgeted site-action integer program.
+  Compares equal-swing and abundance-weighted conservation specifications in
+  simulated landscapes of 12, 22 and 50 sites, with diagnostics for
+  criterion-wide rescaling, nominal-weight rescaling, whole-matrix and
+  column-wise vector normalization, and two effectiveness designs.
 type: software
 license: MIT
 repository-code: "https://github.com/olesonlab/puuwaawaa-normalization"
-identifiers:
-  - type: doi
-    value: "10.2139/ssrn.7485898"
-    description: "Preprint of the accompanying paper on SSRN"
 authors:
   - family-names: Oleson
     given-names: Kirsten L. L.
@@ -21,27 +20,29 @@ authors:
   - family-names: Trauernicht
     given-names: Clay
     affiliation: "University of Hawaiʻi at Mānoa"
-  - family-names: Lonsdorf
-    given-names: Eric
-    affiliation: "Emory University"
   - family-names: Parsons
     given-names: Elliott W.
+    affiliation: "University of Hawaiʻi at Hilo"
+  - family-names: Lonsdorf
+    given-names: Eric
+    affiliation: "Duke University"
 keywords:
   - multi-criteria decision analysis
-  - structured decision making
+  - spatial conservation prioritization
   - normalization
-  - conservation planning
-  - Hawaiʻi
-references:
-  - type: data
-    title: "Puʻuwaʻawaʻa Forest Reserve SDM Input Data"
-    doi: "10.5281/zenodo.20369405"
-    authors:
-      - family-names: Oleson
-        given-names: Kirsten L. L.
-      - family-names: Lonsdorf
-        given-names: Eric
-      - family-names: Trauernicht
-        given-names: Clay
-      - family-names: Parsons
-        given-names: Elliott W.
+  - integer programming
+  - structured decision making
+preferred-citation:
+  type: article
+  title: "When scaling changes conservation priorities: evaluating normalization choices in spatial decision analysis"
+  authors:
+    - family-names: Oleson
+      given-names: Kirsten L. L.
+    - family-names: Trauernicht
+      given-names: Clay
+    - family-names: Parsons
+      given-names: Elliott W.
+    - family-names: Lonsdorf
+      given-names: Eric
+  journal: "Ecological Solutions and Evidence"
+  status: submitted
